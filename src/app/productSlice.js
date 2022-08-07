@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { fetchData } from "./productAPI";
+import { fetchData, addData, updData } from "./productAPI";
 
 // state - the slicer variables
 const initialState = {
@@ -13,6 +13,23 @@ export const fetchDataAsync = createAsyncThunk("prod/fetchData", async () => {
   const response = await fetchData();
   return response.data;
 });
+export const updDataAsync = createAsyncThunk(
+  "prod/updData",
+  async (newProd) => {
+    console.log(newProd);
+    const response = await updData(newProd);
+    return newProd;
+  }
+);
+
+export const addDataAsync = createAsyncThunk(
+  "prod/addData",
+  async (newProd) => {
+    // console.log(newProd);
+    const response = await addData(newProd);
+    return newProd;
+  }
+);
 
 export const prodSlice = createSlice({
   name: "prod",
@@ -31,11 +48,8 @@ export const prodSlice = createSlice({
         console.log(action.payload);
         state.myProducts = action.payload;
       })
-      .addCase(fetchDataAsync.rejected, (state, action) => {
-        console.log("error");
-      })
-      .addCase(fetchDataAsync.pending, (state, action) => {
-        console.log("pending");
+      .addCase(addDataAsync.fulfilled, (state, action) => {
+        state.cart.push(action.payload);
       });
   },
 });
